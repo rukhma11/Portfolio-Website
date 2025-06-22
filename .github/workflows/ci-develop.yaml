@@ -1,0 +1,42 @@
+name: CI for Develop Branch
+
+on:
+  pull_request:
+    branches:
+      - develop
+
+jobs:
+  lint_html_css:
+    name: Lint HTML and CSS
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Install HTMLHint
+        run: npm install -g htmlhint
+
+      - name: Run HTMLHint
+        run: |
+          if ls src/*.html 1> /dev/null 2>&1; then
+            htmlhint src/
+          else
+            echo "No HTML files to lint."
+          fi
+
+      - name: Install Stylelint
+        run: npm install -g stylelint stylelint-config-standard
+
+      - name: Run Stylelint
+        run: |
+          if ls styles/*.css 1> /dev/null 2>&1; then
+            stylelint "styles/**/*.css"
+          else
+            echo "No CSS files to lint."
+          fi
